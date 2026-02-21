@@ -60,18 +60,32 @@ if command -v xattr &>/dev/null; then
   xattr -dr com.apple.quarantine "$INSTALL_DIR" 2>/dev/null || true
 fi
 
-# Symlink
-echo "🔗 Linking claw command..."
-mkdir -p /usr/local/bin 2>/dev/null || true
-if [ -w "/usr/local/bin" ]; then
-  ln -sf "$INSTALL_DIR/bin/claw" "$BIN_LINK"
+# Add to PATH via shell profile instead of symlink (no sudo needed)
+echo "🔗 Setting up claw command..."
+
+SHELL_RC=""
+if [ -f "$HOME/.zshrc" ]; then
+  SHELL_RC="$HOME/.zshrc"
+elif [ -f "$HOME/.bashrc" ]; then
+  SHELL_RC="$HOME/.bashrc"
+elif [ -f "$HOME/.bash_profile" ]; then
+  SHELL_RC="$HOME/.bash_profile"
 else
-  echo "   Need sudo to link to /usr/local/bin..."
-  sudo ln -sf "$INSTALL_DIR/bin/claw" "$BIN_LINK"
+  SHELL_RC="$HOME/.profile"
 fi
+
+PATH_LINE='export PATH="$HOME/.betterclaw/app/bin:$PATH"'
+
+if ! grep -q '.betterclaw/app/bin' "$SHELL_RC" 2>/dev/null; then
+  echo "" >> "$SHELL_RC"
+  echo "# BetterClaw" >> "$SHELL_RC"
+  echo "$PATH_LINE" >> "$SHELL_RC"
+fi
+
+export PATH="$HOME/.betterclaw/app/bin:$PATH"
 
 echo ""
 echo "✅ BetterClaw installed!"
 echo ""
-echo "   Get started:  claw init"
+echo "   Run:  source $SHELL_RC && claw init"
 echo ""
