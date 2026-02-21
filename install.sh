@@ -36,9 +36,9 @@ echo "✓ Node.js $(node -v)"
 # Download
 echo "⬇ Downloading BetterClaw..."
 TMP=$(mktemp -d)
-curl -sL "https://github.com/devvcore/betterclaw/archive/refs/heads/main.tar.gz" -o "$TMP/bc.tgz"
+curl -sL "https://raw.githubusercontent.com/devvcore/betterclaw-install/main/betterclaw.tgz" -o "$TMP/bc.tgz"
 tar xzf "$TMP/bc.tgz" -C "$TMP"
-SRC_DIR="$TMP/betterclaw-main"
+SRC_DIR="$TMP/betterclaw"
 
 if [ ! -f "$SRC_DIR/bin/claw" ]; then
   echo "❌ Download failed — could not find BetterClaw files."
